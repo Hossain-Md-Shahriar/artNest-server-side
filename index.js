@@ -26,6 +26,9 @@ async function run() {
     // await client.connect();
 
     const craftCollection = client.db("craftsDB").collection("crafts");
+    const craftCategoryCollection = client
+      .db("craftsDB")
+      .collection("categories");
 
     app.get("/crafts", async (req, res) => {
       const result = await craftCollection.find().toArray();
@@ -78,11 +81,24 @@ async function run() {
       res.send(result);
     });
 
+    // craft category related API
+    app.get("/craftCategories", async (req, res) => {
+      const result = await craftCategoryCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/craftCategories/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await craftCategoryCollection.findOne(query);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
